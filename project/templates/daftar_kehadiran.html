@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Data Kehadiran Pegawai</title>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+</head>
+<body style= "background-color: #00122e; color: #176a90">
+<div class="container">
+  <br> <br>
+  <h2 style="text-align: center;border-bottom: 3px solid #FFFFFF;width:630px;margin: 0.35em auto"> Data Kehadiran Pegawai </h2>
+  <br> <br>
+  <div class="container" style="text-align:center">
+         <table class="table table-striped">
+               <thead class="thead-inverse">
+               <tr>
+                  <th class="text-center">Nama Pegawai</th>
+                  <th class="text-center">Waktu</th>
+                </tr>
+            </thead>
+         </table>
+      </div>
+</div>
+<script>
+$.getJSON("https://reksti.herokuapp.com/api/presence/today",function(data){
+	console.log(data);
+	var items = [];
+    $.each(data, function(key,val){
+    	items.push("<tr>");
+        items.push("<td id = ''"+key+"''>"+ val.owner +"</td>");
+        items.push("<td id = ''"+key+"''>"+ val.time +"</td>");
+        items.push("</tr>");
+    });
+    $("<tbody/>", {html: items.join("")}).appendTo("table");
+    });
+
+</script>
+</body>
+</html>

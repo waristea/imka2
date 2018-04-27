@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pegawai Baru</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body style= "background-color: #00122e; color: #176a90">
+<div class="container">
+    <br>
+    <h2 style="text-align: center"> Sign in </h2>
+    <br>
+    <form action="/login" method="POST">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" name="email" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <label for="nama">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary " name="submit" type="submit" value="Log in" >
+                Submit
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+<!--
+<div class="form-group">
+    <label for="nama">Password</label>
+    <input type="password" class="password" id="password" name="password" placeholder="Password">
+</div>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RekSTI</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style></style>
+  </head>
+  <body>
+    <script></script>
+    Login<br>
+    {% block body %}
+    {% if session['logged_in'] %}
+    <p>You're logged in already!</p>
+    {% else %}
+    <form action="/login" method="POST">
+      <input type="email" name="email" placeholder="Email">
+      <input type="password" name="password" placeholder="Password">
+      <input type="submit" value="Log in">
+    </form>
+    {% endif %}
+    {% endblock %}
+  </body>
+</html>
+-->

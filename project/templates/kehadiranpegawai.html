@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!-- Data Analytics Pegawai -->
+
+<html lang="en">
+<head>
+  <title>Data Kehadiran Pegawai</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body style= "background-color: #00122e; color: #176a90">
+<div class="container">
+  <br> <br>
+  <h2 style="text-align: center;border-bottom: 3px solid #FFFFFF;width:630px;margin: 0.35em auto"> Data Kehadiran Pegawai </h2>
+  <br> <br>
+  <div class="container">
+         <table class="table table-striped">
+               <thead class="thead-inverse">
+               <tr>
+                  <th class="text-center">No</th>
+                  <th class="text-center">Nama Pegawai</th>
+                  <th class="text-center">Persentase Kehadiran Pegawai</th>
+                  <th class="text-center">Persentase Ketepatan Waktu Hadir Pegawai</th>
+               </tr>
+            </thead>
+            <tbody align="center">
+               <!-- iterasi -->
+               {% for i in range(nama|length) %}
+                 <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{nama[i]}}</td>
+                    <td>{{kali_hadir[i]}}</td>
+                    <td>{{persentase[i]+%}}</td>
+                 </tr>
+               {% endfor %}
+            </tbody>
+         </table>
+      </div>
+</div>
+
+</body>
+</html>
