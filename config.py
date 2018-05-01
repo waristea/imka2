@@ -2,7 +2,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 local = 'postgresql:///waristea'
-remote = 'postgres://kghlcdgdfomzez:6245b60f804388d8e10ab4f6779fd7697bb4539e695d10ab708c9593eeadd16c@ec2-23-23-180-121.compute-1.amazonaws.com:5432/dihc3t6q16qlj
+remote = 'postgres://kghlcdgdfomzez:6245b60f804388d8e10ab4f6779fd7697bb4539e695d10ab708c9593eeadd16c@ec2-23-23-180-121.compute-1.amazonaws.com:5432/dihc3t6q16qlj'
 class Config(object):
     DEBUG = False
     TESTING = False
