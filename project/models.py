@@ -50,100 +50,62 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User {0}>'.format(self.email)
 
-# Cuma ide, gk yakin jalan
-# Tolong dites untuk masuk dan keluar datanya
-class Presence(db.Model):
-    __tablename__ = "presence"
+# Request
+# Berisi request  yang dibuat melalui API oleh perangkat IoT
+# Request hanya dapat disetujui oleh admin
+class Request(db.Model):
+    from enum import IntEnum
+
+    __tablename__ = "request"
+
+    status_enum = IntEnum('Status_enum', 'UNRESPONDED GRANTED REJECTED')
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    owner = db.Column(db.Integer, db.ForeignKey('users.id'))
+    status = db.Column(db.Integer, nullable=False)
     created_on = db.Column(db.DateTime, nullable=False)
     updated_on = db.Column(db.DateTime, nullable=False)
-    time = db.Column(db.DateTime, nullable=True)
-    is_present = db.Column(db.Boolean, nullable=False)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    photo = db.Column(db.String(255), unique=True, nullable=True)
 
-    def __init__(self, owner, time=datetime.datetime.now(), is_present=True):
-        self.owner = owner
-        self.is_present = is_present
+    def __init__(self, status=int(status_enum.UNRESPONDED), updated_by=None, photo=None):
+        self.status = int(status)
         self.created_on = datetime.datetime.now()
         self.updated_on = datetime.datetime.now()
-        self.time = time
+        self.updated_by = updated_by
+        self.photo = photo
 
     def get_dict(self):
-        user = User.query.get(self.owner)
+        request_dict = {}
 
-        presence_dict = {}
-        presence_dict['owner'] = user.name
-        presence_dict['is_present'] = self.is_present
-        presence_dict['created_on'] = self.created_on
-        presence_dict['updated_on'] = self.updated_on
-        presence_dict['time'] = self.time
-        return presence_dict
+        if (updated_by!=None):
+            user = User.query.get(self.updated_by)
+            request_dict['updated_by'] = user.name
+        else:
+            request_dict['updated_by'] = None
 
-    def update_presence(self, is_present):
-        self.is_present = is_present
-        self.updated_on = datetime.datetime.now()
+        request_dict['status'] = self.status
+        request_dict['created_on'] = self.created_on
+        request_dict['updated_on'] = self.updated_on
+        request_dict['photo'] = self.photo
 
-    def update_time(self, time):
-        self.time = time
-        self.updated_on = datetime.datetime.now()
+        return request_dict
 
-    def update_owner(self, owner):
-        self.owner = owner
+    def update_status(self, status, updated_by):
+        if status in status_enum:
+            self.status = int(status)
+            self.updated_by = updated_by
+            self.updated_on = datetime.datetime.now()
+            return True # success
+        else:
+            return False # unsuccessful
+
+    def update_photo(self, photo, updated_by):
+        self.photo = photo
+        self.updated_by = updated_by
         self.updated_on = datetime.datetime.now()
 
     def get_id(self):
         return self.id
 
     def __repr__(self):
-        return '<WorkDay {0}>'.format(self.id)
-
-
-
-# Cuma ide, gk yakin jalan
-# Tolong dites untuk masuk dan keluar datanya
-class Schedule(db.Model):
-    __tablename__ = "schedule"
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    owner = db.Column(db.Integer, db.ForeignKey('users.id'))
-    created_on = db.Column(db.Date, nullable=False)
-    update_on = db.Column(db.DateTime, nullable=False)
-    text = db.Column(db.String, nullable=True)
-    time = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self, owner, text, time=datetime.datetime.now()):
-        self.owner = owner
-        self.created_on = datetime.datetime.now()
-        self.update_on = datetime.datetime.now()
-        self.text = text
-        self.time = time
-
-    def get_dict(self):
-        user = User.query.get(self.owner)
-
-        schedule_dict = {}
-        schedule_dict['owner'] = user.name
-        schedule_dict['created_on'] = self.created_on
-        schedule_dict['update_on'] = self.update_on
-        schedule_dict['text'] = self.text
-        schedule_dict['time'] = self.time
-        return schedule_dict
-
-    def update_text(self, text):
-        self.text = text
-        self.updated_on = datetime.datetime.now()
-
-    def update_time(self, time):
-        self.time = time
-        self.updated_on = datetime.datetime.now()
-
-    def update_owner(self, owner):
-        self.owner = owner
-        self.updated_on = datetime.datetime.now()
-
-    def get_id(self):
-        return self.id
-
-    def __repr__(self):
-        return '<Schedule {0}>'.format(self.id)
+        return '<Request {0}>'.format(self.id)
