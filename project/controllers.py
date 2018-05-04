@@ -3,11 +3,8 @@ from flask import flash, render_template, request, session, redirect, url_for, j
 from flask_login import current_user, login_user, logout_user
 import smtplib
 
-# Reminder:
-# - Buat jadwal
-# - Query user based on name
-# - Implement absen ke api
-# - Buat form input (banyak..)
+ADMIN_EMAIL = "waristea@gmail.com"
+ADMIN_ACCESS_CODE = "uubcprkertzvurnv"
 
 def index():
     if current_user.is_authenticated:
@@ -54,7 +51,7 @@ def register():
                 from project import db
 
                 email = request.form['email']
-                password = "123456"
+                password = request.form['password']
                 name = request.form['name']
 
                 user = User(email=email, password=password, name=name, admin=True)
@@ -81,269 +78,118 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('index'))
 
-def schedule():
-    if not current_user.is_authenticated:
-        return redirect(url_for('index'))
-    else:
-        from project.models import User, Schedule
-        from project import db
-        o_user_list = User.query.all()
-        user_name_list = []
-        for o in o_user_list:
-            user_name_list.append(o.get_name())
-        if request.method=='POST':
-            if request.form['name']!=None and request.form['date']!=None:
-                from project.models import User
-                from project import db
-                import dateutil.parser as dt
-
-                name = request.form['name']
-                date = dt.parse(request.form['date'])
-                activity = request.form['activity']
-
-                print(name)
-                print(date)
-                print(activity)
-
-                if activity==None: activity=""
-
-                print(activity)
-
-
-                user = User.query.filter_by(name=name).first()
-                user_id = user.get_id()
-
-                schedule = Schedule(user_id, activity, date)
-                try:
-                    db.session.add(schedule)
-                    db.session.commit()
-                    status = 'success'
-                except Exception as e:
-                    print("Error : " + str(e))
-                    status = 'failed'
-                print(status)
-                db.session.close()
-
-
-                return render_template('scheduleform.html', user_name_list=user_name_list, message="Add is successful!")
-            else:
-                return render_template('scheduleform.html', user_name_list=user_name_list, message="Please fill in all the textboxes!")
-        else:# request.method=='GET':
-            return render_template('scheduleform.html', user_name_list=user_name_list)
-
-def analytics():
-    if not current_user.is_authenticated:
-        return redirect(url_for('index'))
-    else:
-        from project.models import User, Presence
-        from project import db
-        import datetime
-
-        o_presence_list = Presence.query.all()
-
-        filtered_presence_dict_list = []
-
-        kali_hadir_dict = {}
-
-        today = datetime.datetime.now()
-
-        for o in o_presence_list:
-            p_dict = o.get_dict()
-            kali_hadir_dict[p_dict['owner']] = 0
-
-        for o in o_presence_list:
-            p_dict = o.get_dict()
-            time = p_dict["time"]
-            if(time.month==today.month):
-                kali_hadir_dict[p_dict['owner']] += 1
-
-        nama = ["None"] * len(kali_hadir_dict)
-        kali_hadir = [0] * len(kali_hadir_dict)
-        persentase = [0.00] * len(kali_hadir_dict)
-
-        tanggal = today.date
-
-        print(kali_hadir_dict)
-        i = 0
-        for k, v in kali_hadir_dict.items():
-            nama[i] = k
-            kali_hadir[i] = v
-            persentase[i] = (v/today.day)*100
-            i += 1
-        print(nama)
-        print(kali_hadir)
-        print(persentase)
-
-        return render_template('kehadiranpegawai.html', nama=nama, kali_hadir=kali_hadir, persentase=persentase)
-
-
 # Untuk RekSTI
+# Read
+def request_detail(request_id):
+    from project import app
+    from project.models import Request
+    import json
+
+    try:
+        open_requests = Request.query.filter_by(id=request_id)
+        open_requests_dict = []
+        for r in open_requests:
+            open_requests.append(r.get_dict())
+
+    except Exception as e:
+        print(e)
+    else:
+        # TBD : route to view
+
+def request_all():
+    from project import app
+    from project.models import Request
+    import json
+
+    try:
+        open_requests = Request.query.all()
+        open_requests_dict = []
+        for r in open_requests:
+            open_requests.append(r.get_dict())
+
+    except Exception as e:
+        print(e)
+    else:
+        # TBD : route to view
+# Read all
+
 # API
 # Create
-def api_presence_add():
+def api_request_create():
     from project import app, db
-    from project.models import User, Presence, Schedule
-    import datetime
+    from project.models import User, Request
+    import datetime, json
 
     json_data = request.get_json()
     print(json_data)
-    user_name = json_data['owner']
-    user = User.query.filter_by(name=user_name).first()
 
-    data = {}
-    if user==None:
+    """
+    today_pure = (datetime.datetime.now() + datetime.timedelta(hours=7))
+    today = today_pure.isocalendar()
+    """
+    # today = datetime.datetime.now()
+
+    open_request = Request()
+    data = {} # To report to IoT device
+    try:
+        db.session.add(open_request)
+        db.session.commit()
+        db.session.close()
+    except Exception as e:
         data['status'] = 'failed'
-        data['message'] = 'person is not registered'
-
-        response = app.response_class(
-            response = json.dumps(data),
-            status=400,
-            mimetype='application/json'
-        )
+        data['message'] = 'exception occured, please contact admin'
+        print(e)
     else:
-        presence = Presence.query.filter_by(owner=user.get_id()).order_by(Presence.time.desc()).first()
-        today_pure = (datetime.datetime.now() + datetime.timedelta(hours=7))
-        today = today_pure.isocalendar()
+        # Writing email
+        user_list = User.query.all()
 
-        if (presence==None or presence.time.date()!=today_pure.date()):
+        names = []
+        targets = []
 
-            user_id = user.get_id()
-            presence = Presence(user_id, today_pure)
+        for user in user_list:
+            names.append(user.name)
+            emails.append(user.email)
 
-            try:
+        subject = "Notification"
+        body = "There are new door request, please check website for further info."
 
-                db.session.add(presence)
-                db.session.commit()
+        send_email(ADMIN_EMAIL, targets, subject, body, ADMIN_ACCESS_CODE)
 
-                gmail_user = "waristea@gmail.com"
-                gmail_password = "uubcprkertzvurnv"
+        # Reporting to IoT Device
+        data['creation_status'] = 'successful'
+        data['message'] = 'Request creation successful. You can check request status by looking at http://imka.herokuapp.com/request/<request_id> or http://imka.herokuapp.com/api/request/<request_id>'
+        data['request_id'] = open_request.get_id()
+        data['request'] = json.dumps(open_request.get_dict())
 
-                to = [user.email]
-                subject = "Notification"
-                body = "You are marked as present."
-
-                user_id = user.get_id()
-                schedule_list = Schedule.query.filter_by(owner=user_id).all()
-
-                print(len(schedule_list))
-                print(today)
-
-                for s in schedule_list:
-                    s_dict = s.get_dict()
-                    time = s_dict["time"]
-                    print(time.isocalendar())
-                    print(today)
-                    print(s_dict["text"])
-
-                    if(time.isocalendar()==today):
-                        print("IN!!!!!!!!!!")
-                        body = "You are marked as present.\n Here are your schedules:\n " + s_dict["text"]
-
-                send_email(gmail_user, to, subject, body, gmail_password)
-
-                data['status'] = 'successful'
-                data['message'] = 'user is marked as present'
-                data['user'] = user.serialize()
-
-            except Exception as e:
-                data['status'] = 'failed'
-                data['message'] = 'expection occured, please contact admin'
-                print(e)
-            db.session.close()
-        else:
-
-            data['status'] = 'successful'
-            data['message'] = 'user has already been marked as present'
-            data['user'] = user.serialize()
-
-        response = app.response_class(
-            response = json.dumps(data),
-            status=200,
-            mimetype='application/json'
-        )
-    print("Yes")
+    response = app.response_class(
+        response = json.dumps(data),
+        status=200,
+        mimetype='application/json'
+    )
 
     return response
 # Read
-def api_presence_today():
-    from project import app, db
-    from project.models import Presence
-    from sqlalchemy import Date, cast
-    import datetime
-    #json_data = request.get_json()
-    #print(json_data)# Seharusnya gk ada
-    o_presence_list = db.session.query(Presence).filter(cast(Presence.time,Date) == datetime.date.today()).all()
-
-    presence_list = []
-
-    for p in o_presence_list:
-        presence_list.append(p.get_dict())
-
-    print(presence_list)
-
-    response = app.response_class(
-        response = json.dumps(presence_list),
-        status=200,
-        mimetype='application/json'
-    )
-    return response
-
-def api_presence_detail_by_user(user_id):
+def api_request_detail(request_id):
     from project import app
-    from datetime import date
+    from project.models import Request
+    import json
 
     #json_data = request.get_json()
     #print(json_data)
+    try:
+        open_requests = Request.query.filter_by(id=request_id)
+        open_requests_dict = []
+        for r in open_requests:
+            open_requests.append(json.dumps(r.get_dict())
 
-
-
-    data = {'status' : 'successful'}
-
-    response = app.response_class(
-        response = json.dumps(data),
-        status=200,
-        mimetype='application/json'
-    )
-    return response
-
-def api_presence_detail_by_id(presence_id):
-    from project import app
-
-    #json_data = request.get_json()
-    #print(json_data)
-
-    data = {'status' : 'successful'}
-
-    response = app.response_class(
-        response = json.dumps(data),
-        status=200,
-        mimetype='application/json'
-    )
-    return response
-# Update
-def api_presence_update(presence_id):
-    from project import app
-
-    json_data = request.get_json()
-    print(json_data)
-
-    data = {'status' : 'successful'}
-
-    response = app.response_class(
-        response = json.dumps(data),
-        status = 200,
-        mimetype='application/json'
-    )
-    return response
-
-# Delete
-def api_presence_delete(presence_id):
-    from project import app
-
-    json_data = request.get_json()
-    print(json_data)
-
-    data = {'status' : 'successful'}
+    except Exception as e:
+        data['status'] = 'failed'
+        data['message'] = 'exception occured, please contact admin'
+        print(e)
+    else:
+        data = {}
+        data['status'] = 'successful'
+        data['requests'] = json.dumps(open_requests_dict)
 
     response = app.response_class(
         response = json.dumps(data),
@@ -352,8 +198,8 @@ def api_presence_delete(presence_id):
     )
     return response
 
-# Gunakan password dan username yagn disediakan google
-def send_email(from_addr, to_addr_list, subject, body, gmail_password, smtp_server = 'smtp.gmail.com', port = 465):
+# Email
+def send_email(from_addr, to_addr_list, subject, body, gmail_password, smtp_server = 'smtp.gmail.com', port = 587):
     import smtplib
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
@@ -361,11 +207,11 @@ def send_email(from_addr, to_addr_list, subject, body, gmail_password, smtp_serv
     msg = MIMEMultipart()
     msg['From'] = from_addr
     msg['To'] = to_addr_list[0]
-    msg['Subject'] = "SUBJECT"
+    msg['Subject'] = subject
     msg.attach(MIMEText(body, 'plain'))
 
     # SMTP_SSL Example
-    server_ssl = smtplib.SMTP("smtp.gmail.com", 587)
+    server_ssl = smtplib.SMTP(smtp_server, port)
     server_ssl.ehlo() # optional, called by login()
     server_ssl.starttls()
     server_ssl.login(from_addr, gmail_password)
