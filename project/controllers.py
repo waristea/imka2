@@ -8,8 +8,7 @@ ADMIN_ACCESS_CODE = "uubcprkertzvurnv"
 
 def index():
     if current_user.is_authenticated:
-        print(current_user.get_id())
-        return redirect(url_for('schedule'))
+        return render_template('dashboard.html')
     else:
         return render_template('login.html')
 
@@ -40,7 +39,7 @@ def login():
         # Login page is fetched
         print("Login page is fetched usign GET directly!")
         #return index()
-    return index()
+    return redirect(url_for('index'))
 
 def register():
     # if login is being done
@@ -108,7 +107,7 @@ def request_all():
     try:
         open_requests = Request.query.all()
         for r in open_requests:
-            
+
             open_requests_dict.append(r.get_dict())
 
     except Exception as e:
