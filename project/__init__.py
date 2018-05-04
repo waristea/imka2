@@ -43,6 +43,31 @@ def login():
 def logout():
     return controllers.logout()
 
+# IMKA yang dipakai
+# Read open request(s)
+@app.route('/request/<request_id>', methods=['GET'])
+def request_detail():
+    return controllers.request_detail()
+
+@app.route('/request/all', methods=['GET'])
+def request_all():
+    return controllers.request_all()
+
+# API
+# Create new open request
+@app.route('/api/request/', methods=['POST'])
+def api_request_create():
+    return controllers.api_request_create()
+
+# Read open request(s)
+@app.route('/api/request/<request_id>', methods=['GET'])
+def api_request_detail():
+    return controllers.api_request_detail()
+
+
+"""
+# Reksti
+
 @app.route('/schedule', methods=['GET', 'POST'])
 def schedule():
     return controllers.schedule()
@@ -50,7 +75,6 @@ def schedule():
 @app.route('/analytics', methods=['GET'])
 def analytics():
     return controllers.analytics()
-
 # Untuk RekSTI - API CRUD
 # Create
 # Receive a create request from read (form is in the listing)
@@ -79,7 +103,7 @@ def api_request_update(presence_id):
 @app.route('/api/presence/<presence_id>', methods=['DELETE'])
 def api_request_delete(presence_id):
     return controllers.api_presence_delete(presence_id)
-
+"""
 # Untuk IMKA
 """
 # Request CRUD
