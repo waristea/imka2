@@ -85,32 +85,52 @@ def request_detail(request_id):
     from project.models import Request
     import json
 
+    open_requests_dict = []
     try:
         open_requests = Request.query.filter_by(id=request_id)
         open_requests_dict = []
         for r in open_requests:
-            open_requests.append(r.get_dict())
+            open_requests_dict.append(r.get_dict())
 
     except Exception as e:
         print(e)
     else:
         # TBD : route to view
+        for r in open_requests_dict:
+            print(r['id'])
 
 def request_all():
     from project import app
     from project.models import Request
     import json
 
+    open_requests_dict = []
     try:
         open_requests = Request.query.all()
-        open_requests_dict = []
         for r in open_requests:
-            open_requests.append(r.get_dict())
+            
+            open_requests_dict.append(r.get_dict())
 
     except Exception as e:
         print(e)
     else:
         # TBD : route to view
+        for r in open_requests_dict:
+            print(r['id'])
+            out = json.dumps(r, indent=4, sort_keys=True, default=str)
+        print(out)
+        return render_template("request_list.html", dict=open_requests_dict)
+    return render_template("index.html")
+    """
+    response = app.response_class(
+        response = json.dumps(data),
+        status=200,
+        mimetype='application/json'
+    )
+
+    return response
+    """
+
 # Read all
 
 # API
@@ -176,18 +196,17 @@ def api_request_detail(request_id):
 
     #json_data = request.get_json()
     #print(json_data)
+    open_requests_dict = []
+    data = {}
     try:
         open_requests = Request.query.filter_by(id=request_id)
-        open_requests_dict = []
         for r in open_requests:
-            open_requests.append(json.dumps(r.get_dict())
-
+            open_requests_dict.append(json.dumps(r.get_dict()))
     except Exception as e:
         data['status'] = 'failed'
         data['message'] = 'exception occured, please contact admin'
         print(e)
     else:
-        data = {}
         data['status'] = 'successful'
         data['requests'] = json.dumps(open_requests_dict)
 

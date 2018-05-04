@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     admin = db.Column(db.Boolean, nullable=False, default=False)
     notified = db.Column(db.Boolean, nullable=False, default=True)
 
-    def __init__(self, email, password, name, admin=False, notified=True):
+    def __init__(self, email, password, name, admin=True, notified=True):
         self.email = email
         self.password = generate_password_hash(password)
         self.name = name
@@ -68,7 +68,7 @@ class Request(db.Model):
 
     __tablename__ = "request"
 
-    status_enum = IntEnum('Status_enum', 'UNRESPONDED GRANTED REJECTED')
+    status_enum = IntEnum('Status_enum', 'Unresponded Granted Rejected')
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     status = db.Column(db.Integer, nullable=False)
@@ -77,7 +77,7 @@ class Request(db.Model):
     updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     photo = db.Column(db.String(255), unique=True, nullable=True)
 
-    def __init__(self, status=int(status_enum.UNRESPONDED), updated_by=None, photo=None):
+    def __init__(self, status=status_enum(1).value, updated_by=None, photo=None):
         self.status = int(status)
         self.created_on = datetime.datetime.now()
         self.updated_on = datetime.datetime.now()
@@ -87,14 +87,15 @@ class Request(db.Model):
     def get_dict(self):
         request_dict = {}
 
-        if (updated_by!=None):
+        if (self.updated_by!=None):
             user = User.query.get(self.updated_by)
             request_dict['updated_by'] = user.name
         else:
             request_dict['updated_by'] = None
 
         request_dict['id'] = self.id
-        request_dict['status'] = self.status
+        request_dict['status'] = self.status_enum(self.status).name
+        request_dict['status_code'] = self.status
         request_dict['created_on'] = self.created_on
         request_dict['updated_on'] = self.updated_on
         request_dict['photo'] = self.photo

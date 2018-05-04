@@ -1,20 +1,293 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>RekSTI - Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+
+body {
+    font-family: "Lato", sans-serif; background-color: #D1D140; 
+}
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #08471C;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #D1D140;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #08471C;
+    background-color: #D1D140;
+}
+
+
+.close {
+    position: absolute;
+    right: 32px;
+    top: 15px;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.close:hover,.close:focus {
+    color: #D1D140;
+    cursor: pointer;
+}
+#main {
+    transition: margin-left .5s;
+    padding: 16px;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1);
+  max-width: 300px;
+  margin: left;
+  text-align: center;
+  font-family: arial;
+  background-color: #000
+}
+
+.title {
+  color: grey;
+  font-size: 18px;
+}
+
+buttonpro {
+  border: none;
+  outline: 0;
+  display: block;
+  padding: 6px;
+  color: black;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+buttonpro:hover {
+  opacity: 0.7;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 42%;
+    padding: 12px 17px;
+    margin: 8px 15px;
+    display: block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size:16px;
+}
+
+
+/* Center the image and position the close button */
+.imgcontainer {
+    text-align: center;
+    margin: 2px 0 12px 0;
+    position: relative;
+}
+
+/* The Modal (background) */
+.modal {
+    display:none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 70px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+/* Modal Content Box */
+.modal-content {
+    background-color: rgba(17,17,17, 0.9);
+    margin: 4% auto 15% auto;
+    border: 1px solid #888;
+    width: 40%; 
+    padding-bottom: 20px;
+}
+
+/* Add Zoom Animation */
+.animate {
+    animation: zoom 0.6s
+}
+@keyframes zoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+
 </head>
 <body>
-You are logged in!
-{% if current_user.is_authenticated %}
-  Hi {{ current_user.name }}!
-{% endif %}
+<!-- MENU -->
+<div id="mySidenav" class="sidenav">
+  <a href="#">Requests</a>
+  <a href="#">Profiles</a>
+  <span onclick="closeNav()" class="close" title="Close Menu">&times;</span>
+ </div>
+
+<div id="main">
+  <span style="font-size:30px;cursor:pointer;background-color:#08471C; color: #D1D140 " onclick="openNav()">&#9776; Menu </span>
+</div>
+
+<!-- Page Profiles -->
 <br>
-<a href="/logout"><button>Logout</button></a>
+<h1 style="text-align:center; font-size:30px; color:#08471C;margin: 0.35em auto; border-bottom: 5px solid #08471C; width:315px; border-radius: 25px">Manage Profiles</h1>
 <br>
-Add Admin
-<br>
-<a href="/signup"><button>Add</button></a>
-<br>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- urusan profil -->
+    <div class="col-sm-4" style="background-color: rgba(17,17,17,0);">
+      <br>
+      <h1 style="margin: 0.35em auto; text-align: center; font-size: 20px;color:#08471C; border-bottom: 5px solid #08471C; width:155px;"> Your Profile </h1>
+      <br>
+    <div class="card" style="margin: 0.35em auto">
+        <img src="https://orig00.deviantart.net/177c/f/2013/276/8/5/3d_ironman_by_marksman56-d6p3naj.jpg" alt="John" style="width:100%">
+        <h1 style="margin: 0.1em auto;font-size: 20px">Nama Admin</h1>
+      <p class="title" style="margin: 0.1em auto;">username admin</p>
+      <p> 
+        <buttonpro onclick="document.getElementById('editaccount').style.display='block'" style="background-color: #2E8B57">Edit Your Account</buttonpro>
+        <buttonpro onclick="document.getElementById('deleteaccount').style.display='block'" style="background-color: #FA8072">Delete Your Account</buttonpro>
+        <buttonpro onclick="document.getElementById('addaccount').style.display='block'" style="background-color: #8c61a5">Add New Account</buttonpro>
+      </p>
+         </div>
+    </div>
+    <!-- urusan list admin -->
+    <div class="col-sm-8" style="background-color:rgba(17,17,17,0);">
+      <br>
+      <h1 style="margin: 0.35em auto;text-align: center; font-size: 20px;color:#08471C; border-bottom: 5px solid #08471C; width:155px;"> Admins </h1>
+      <br>
+      <div class="container">         
+         <table class="table table-striped" style="padding: 0px; background-color: rbga(0,0,0,0.5); width:75%">
+               <thead class="thead-inverse">
+               <tr>
+                  <th class="text-center">No</th>
+                  <th class="text-center">Nama</th>
+                  <th class="text-center">Username</th>
+               </tr>
+            </thead>
+            <tbody align="center">
+               <!-- iterasi -->
+               <tr>
+                  <td>{{ }}</td>
+                  <td>{{ }}</td>
+                  <td>{{ }}</td>   
+               </tr>
+            </tbody>
+         </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL add account --> 
+<div id="addaccount" class="modal">
+  
+  <form class="modal-content animate" action="/action_page.php">
+        
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('addaccount').style.display='none'" class="close" title="Close PopUp">&times;</span>
+    
+      <h1 style="align:center; color: #8c61a5";>Add New Account</h1>
+    </div>
+
+    <div class="container" style="color: #8c61a5">
+      <input type="text" placeholder="Enter Name" name="name";>
+      <input type="text" placeholder="Enter Email" name="email";>
+      <input type="password" placeholder="Enter Password" name="psw">       
+      <buttonpro type="submit" style="width: 45%;background-color:#8c61a5;">Save Edit</buttonpro>
+    </div>
+    
+  </form>
+  
+</div>
+
+<!-- MODAL edit account --> 
+<div id="editaccount" class="modal">
+  
+  <form class="modal-content animate" action="/action_page.php">
+        
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('editaccount').style.display='none'" class="close" title="Close PopUp">&times;</span>
+    
+      <h1 style="text-align:center;color: #2E8B57";>Edit Account</h1>
+    </div>
+
+    <div class="container">
+      <input type="text" placeholder="Edit Name" name="editname";>
+      <input type="password" placeholder="Edit Password" name="editpsw">  
+      <p>      
+      <buttonpro type="submit" style="width: 45%;background-color:#2E8B57;">Save Edit</buttonpro>
+      </p>
+    </div>
+    
+  </form>
+  
+</div>
+
+<!-- MODAL delete account --> 
+<div id="deleteaccount" class="modal">
+  
+  <form class="modal-content animate" action="/action_page.php">
+        
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('deleteaccount').style.display='none'" class="close" title="Close PopUp">&times;</span>
+    
+      <h1 style="text-align:center;color: #FA8072";>Delete Account</h1>
+    </div>
+
+    <div class="container">
+      <p style="color: #FFFFFF"> Are you sure you want to delete this account? </p>  
+      <p style="align: center">      
+      <buttonpro type="submit" style="display: inline-block; width: 22%;background-color:#FA8072;"> Yes </buttonpro>
+      <buttonpro type="submit" style="display: inline-block; width: 22%;background-color:#FF5733 ;"> No </buttonpro>
+      </p>
+    </div>
+    
+  </form>
+  
+</div>
+
+<!-- SCRIPT -->
+<script>
+function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+    document.getElementById("main").style.marginLeft = "250px";
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginLeft= "0";
+}
+
+</script>
+     
 </body>
-</html>
+</html> 
