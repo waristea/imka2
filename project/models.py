@@ -13,14 +13,21 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255), nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
-    #presence = db.Column(db.ARRAY(WorkDay), nullable=True)
+    notified = db.Column(db.Boolean, nullable=False, default=True)
 
-    def __init__(self, email, password, name, admin=False):
+    def __init__(self, email, password, name, admin=False, notified=True):
         self.email = email
         self.password = generate_password_hash(password)
         self.name = name
         self.registered_on = datetime.datetime.now()
         self.admin = admin
+        self.notified = notified
+
+    def get_dict(self):
+        user_dict = {}
+        user_dict['email'] = self.email
+        user_dict['name'] = self.name
+        return user_dict
 
     def serialize(self):
         import json
@@ -46,6 +53,9 @@ class User(UserMixin, db.Model):
 
     def get_name(self):
         return self.name
+
+    def get_email(self):
+        return self.email
 
     def __repr__(self):
         return '<User {0}>'.format(self.email)
@@ -83,6 +93,7 @@ class Request(db.Model):
         else:
             request_dict['updated_by'] = None
 
+        request_dict['id'] = self.id
         request_dict['status'] = self.status
         request_dict['created_on'] = self.created_on
         request_dict['updated_on'] = self.updated_on
