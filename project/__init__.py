@@ -61,8 +61,8 @@ def api_request_create():
 
 # Read open request(s)
 @app.route('/api/request/<request_id>', methods=['GET'])
-def api_request_detail():
-    return controllers.api_request_detail()
+def api_request_detail(request_id):
+    return controllers.api_request_detail(request_id)
 
 
 """

@@ -153,11 +153,6 @@ def api_request_create():
     try:
         db.session.add(open_request)
         db.session.commit()
-    except Exception as e:
-        data['status'] = 'failed'
-        data['message'] = 'exception occured, please contact admin'
-        print(e)
-    else:
         # Writing email
         user_list = User.query.all()
 
@@ -177,10 +172,15 @@ def api_request_create():
         data['creation_status'] = 'successful'
         data['message'] = 'Request creation successful. You can check request status by looking at http://imka.herokuapp.com/request/<request_id> or http://imka.herokuapp.com/api/request/<request_id>'
         data['request_id'] = open_request.get_id()
-        data['request'] = json.dumps(open_request.get_dict())
+        data['request'] = json.dumps(open_request.get_dict(), indent=4, sort_keys=True, default=str)
 
-    db.session.close()
-    response = app.response_class(
+        db.session.close()
+    except Exception as e:
+        data['status'] = 'failed'
+        data['message'] = 'exception occured, please contact admin'
+        print(e)
+    else:
+        response = app.response_class(
         response = json.dumps(data),
         status=200,
         mimetype='application/json'
@@ -200,14 +200,13 @@ def api_request_detail(request_id):
     try:
         open_requests = Request.query.filter_by(id=request_id)
         for r in open_requests:
-            open_requests_dict.append(json.dumps(r.get_dict()))
+            open_requests_dict.append(r.get_dict())
+        data['status'] = 'successful'
+        data['requests'] = json.dumps(open_requests_dict, indent=4, sort_keys=True, default=str)
     except Exception as e:
         data['status'] = 'failed'
         data['message'] = 'exception occured, please contact admin'
         print(e)
-    else:
-        data['status'] = 'successful'
-        data['requests'] = json.dumps(open_requests_dict)
 
     response = app.response_class(
         response = json.dumps(data),
