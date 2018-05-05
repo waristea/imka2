@@ -215,6 +215,42 @@ def api_request_detail(request_id):
     )
     return response
 
+def api_request_detail_change(request_id):
+    from project import app, db
+    from project.models import Request
+    import json
+
+    json_data = request.get_json()
+    #print(json_data)
+    open_requests_dict = []
+    data = {}
+    try:
+        open_request = Request.query.get(request_id)
+        if 'photo' in json_data:
+            open_request.update_photo(json_data['photo'], None)
+        if 'status' in json_data:
+            open_request.update_status(json_data['status'], None)
+
+        db.session.add(open_request)
+        db.session.commit()
+
+        data['status'] = 'successful'
+        data['requests'] = json.dumps(open_request.get_dict(), indent=4, sort_keys=True, default=str)
+        db.session.close()
+    except Exception as e:
+        data['status'] = 'failed'
+        data['message'] = 'Exception occured, data may be unavailable for the key given. Please contact admin for further information'
+        print(e)
+
+    response = app.response_class(
+        response = json.dumps(data),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+
 # Email
 def send_email(from_addr, to_addr_list, subject, body, gmail_password, smtp_server = 'smtp.gmail.com', port = 587):
     import smtplib

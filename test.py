@@ -1,5 +1,6 @@
 import json
 import urllib.request
+import base64
 
 local = "http://127.0.0.1:5000"
 remote = "http://imka.herokuapp.com"
@@ -13,7 +14,7 @@ def test_api_request_create():
     headers = {'content-type': 'application/json'}
 
     json_data = json.dumps(data).encode('utf8')
-    url = local+path[0]
+    url = remote+path[0]
     print(url)
     method = 'POST'
 
@@ -31,9 +32,36 @@ def test_api_request_detail(id):
     headers = {'content-type': 'application/json'}
 
     json_data = json.dumps(data).encode('utf8')
-    url = local+path[0]+str(id)
+    url = remote+path[0]+str(id)
     print(url)
     method = 'GET'
+
+    req = urllib.request.Request(url, data=json_data, headers=headers, method=method)
+    response = urllib.request.urlopen(req)
+
+    print(response.read())
+
+def test_api_request_detail_change(id):
+    path = ["/api/request/"]
+
+    with open("ruby.jpg", "rb") as image_file:
+        photo_string = base64.b64encode(image_file.read())
+
+    """
+    img_data = base64.b64decode(photo_string)
+    filename = 'new_ruby.jpg'  # I assume you have a way of picking unique filenames
+    with open(filename, 'wb') as f:
+        f.write(img_data)
+    """
+    data = {}
+    data['photo'] = photo_string
+
+    headers = {'content-type': 'application/json'}
+
+    json_data = json.dumps(data, indent=4, sort_keys=True, default=str).encode('utf8')
+    url = local+path[0]+str(id)
+    print(url)
+    method = 'POST'
 
     req = urllib.request.Request(url, data=json_data, headers=headers, method=method)
     response = urllib.request.urlopen(req)
@@ -72,4 +100,4 @@ def test_email():
     send_email(gmail_user, to, subject, body, gmail_password)
 
 if __name__=="__main__":
-    test_api_request_detail(10)
+    test_api_request_detail_change(10)

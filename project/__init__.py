@@ -1,6 +1,6 @@
 # project/__init__.py
 
-from flask import Flask
+from flask import Flask, request
 
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -60,11 +60,12 @@ def api_request_create():
     return controllers.api_request_create()
 
 # Read open request(s)
-@app.route('/api/request/<request_id>', methods=['GET'])
+@app.route('/api/request/<request_id>', methods=['GET', 'POST'])
 def api_request_detail(request_id):
-    return controllers.api_request_detail(request_id)
-
-
+    if request.method=='GET':
+        return controllers.api_request_detail(request_id)
+    else: #request.method=='POST':
+        return controllers.api_request_detail_change(request_id)
 """
 # Reksti
 
