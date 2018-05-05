@@ -2,33 +2,22 @@ import json
 import urllib.request
 
 local = "http://127.0.0.1:5000"
-remote = "http://reksti.herokuapp.com"
-def test_api():
-    path = ["/api/presence", "/api/presence/all"]
+remote = "http://imka.herokuapp.com"
+
+def test_api_request_create():
+    path = ["/api/request"]
 
     data = {}
-    data['owner'] = 'William'
+    data['photo'] = "Testing"
 
     headers = {'content-type': 'application/json'}
 
     json_data = json.dumps(data).encode('utf8')
-    url = remote+path[0]
+    url = local+path[0]
     print(url)
     method = 'POST'
 
     req = urllib.request.Request(url, data=json_data, headers=headers, method=method)
-    response = urllib.request.urlopen(req)
-
-    print(response.read())
-
-def test_api_presence_today():
-    path = ["/api/presence/today"]
-
-    url = remote+path[0]
-    print(url)
-    method = 'GET'
-
-    req = urllib.request.Request(url, method=method)
     response = urllib.request.urlopen(req)
 
     print(response.read())
@@ -64,7 +53,5 @@ def test_email():
     body = "Testing"
     send_email(gmail_user, to, subject, body, gmail_password)
 
-
-
 if __name__=="__main__":
-    test_api()
+    test_api_request_create()

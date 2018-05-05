@@ -55,7 +55,7 @@ def request_all():
 
 # API
 # Create new open request
-@app.route('/api/request/', methods=['POST'])
+@app.route('/api/request', methods=['POST'])
 def api_request_create():
     return controllers.api_request_create()
 

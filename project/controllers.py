@@ -148,12 +148,11 @@ def api_request_create():
     """
     # today = datetime.datetime.now()
 
-    open_request = Request()
+    open_request = Request(photo=json_data['photo'])
     data = {} # To report to IoT device
     try:
         db.session.add(open_request)
         db.session.commit()
-        db.session.close()
     except Exception as e:
         data['status'] = 'failed'
         data['message'] = 'exception occured, please contact admin'
@@ -167,19 +166,20 @@ def api_request_create():
 
         for user in user_list:
             names.append(user.name)
-            emails.append(user.email)
-
+            targets.append(user.email)
+        """
         subject = "Notification"
         body = "There are new door request, please check website for further info."
 
         send_email(ADMIN_EMAIL, targets, subject, body, ADMIN_ACCESS_CODE)
-
+        """
         # Reporting to IoT Device
         data['creation_status'] = 'successful'
         data['message'] = 'Request creation successful. You can check request status by looking at http://imka.herokuapp.com/request/<request_id> or http://imka.herokuapp.com/api/request/<request_id>'
         data['request_id'] = open_request.get_id()
         data['request'] = json.dumps(open_request.get_dict())
 
+    db.session.close()
     response = app.response_class(
         response = json.dumps(data),
         status=200,
