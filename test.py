@@ -14,7 +14,7 @@ def test_api_request_create():
     headers = {'content-type': 'application/json'}
 
     json_data = json.dumps(data).encode('utf8')
-    url = remote+path[0]
+    url = local+path[0]
     print(url)
     method = 'POST'
 
@@ -32,7 +32,7 @@ def test_api_request_detail(id):
     headers = {'content-type': 'application/json'}
 
     json_data = json.dumps(data).encode('utf8')
-    url = remote+path[0]+str(id)
+    url = local+path[0]+str(id)
     print(url)
     method = 'GET'
 
@@ -100,4 +100,5 @@ def test_email():
     send_email(gmail_user, to, subject, body, gmail_password)
 
 if __name__=="__main__":
-    test_api_request_detail_change(10)
+    #test_api_request_create()
+    test_api_request_detail_change(15)
