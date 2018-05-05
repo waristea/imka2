@@ -45,9 +45,9 @@ def logout():
 
 # IMKA yang dipakai
 # Read open request(s)
-@app.route('/request/<request_id>', methods=['GET'])
-def request_detail():
-    return controllers.request_detail()
+@app.route('/request/<request_id>/photo', methods=['GET'])
+def request_photo(request_id):
+    return controllers.request_photo(request_id)
 
 @app.route('/request/all', methods=['GET'])
 def request_all():

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IMKA</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+
+  </head>
+  <body>
+    {% if photo %}
+      <img id="imgElem"></img>
+    {% else %}
+      <h1>no image for whatever reason</h1>
+    {% endif %}
+  </body>
+
+  <script>
+    function loadPhoto(){
+      imgElem = document.getElementById("imgElem");
+      base64String = "data:image/jpg;charset=utf-8;base64,"+"{{photo|safe}}";
+      imgElem.setAttribute('src', base64String);
+      console.log("{{photo|safe}}");
+    }
+    loadPhoto()
+  </script>
+</html>
+
+
+
+""

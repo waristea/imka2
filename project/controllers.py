@@ -79,24 +79,29 @@ def logout():
 
 # Untuk RekSTI
 # Read
-def request_detail(request_id):
+def request_photo(request_id):
     from project import app
     from project.models import Request
     import json
+    import base64
 
-    open_requests_dict = []
     try:
-        open_requests = Request.query.filter_by(id=request_id)
-        open_requests_dict = []
-        for r in open_requests:
-            open_requests_dict.append(r.get_dict())
+        open_request = Request.query.get(request_id)
+        open_request_dict = open_request.get_dict()
 
+        byte_str = str(open_request_dict['photo'][2:-2]).replace("/","/%0a")
+        
+        """
+        img_data = base64.b64decode(byte_str)
+        filename = str(open_request_dict['id'])+'.jpg'
+        with open(filename, 'wb') as f:
+            f.write(img_data)
+            """
+        return render_template('details.html', photo=byte_str)
     except Exception as e:
         print(e)
-    else:
-        # TBD : route to view
-        for r in open_requests_dict:
-            print(r['id'])
+    return render_template('details.html')
+
 
 def request_all():
     from project import app
