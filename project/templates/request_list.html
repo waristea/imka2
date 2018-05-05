@@ -93,7 +93,7 @@ body {
                <!-- iterasi -->
                {% for r in dict %}
                  <tr>
-                    <td>{{r['id']}}</td>
+                    <td><a href="/request/{{r['id']}}/photo">{{r['id']}}</a></td>
                     <td>{{r['status']}}</td>
                     <td>{{r['created_on']}}</td>
                     <td>{{r['updated_by']}}</td>
