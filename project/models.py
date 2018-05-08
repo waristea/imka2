@@ -25,6 +25,7 @@ class User(UserMixin, db.Model):
 
     def get_dict(self):
         user_dict = {}
+        user_dict['id'] = self.id
         user_dict['email'] = self.email
         user_dict['name'] = self.name
         return user_dict
@@ -103,7 +104,9 @@ class Request(db.Model):
         return request_dict
 
     def update_status(self, status, updated_by):
-        if status in status_enum:
+        values = [item.value for item in self.status_enum]
+
+        if status in values:
             self.status = int(status)
             self.updated_by = updated_by
             self.updated_on = datetime.datetime.now()

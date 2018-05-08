@@ -49,6 +49,10 @@ def logout():
 def request_photo(request_id):
     return controllers.request_photo(request_id)
 
+@app.route('/request/<request_id>/status', methods=['POST'])
+def request_change_status(request_id):
+    return controllers.request_change_status(request_id)
+
 @app.route('/request/all', methods=['GET'])
 def request_all():
     return controllers.request_all()

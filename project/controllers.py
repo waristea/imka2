@@ -8,7 +8,20 @@ ADMIN_ACCESS_CODE = "uubcprkertzvurnv"
 
 def index():
     if current_user.is_authenticated:
-        return render_template('dashboard.html')
+        from project import app
+        from project.models import User
+        import json
+
+        user_dict = []
+        try:
+            users = User.query.all()
+            for u in users:
+                user_dict.append(u.get_dict())
+
+        except Exception as e:
+            print(e)
+            
+        return render_template('dashboard.html', dict=user_dict)
     else:
         return render_template('login.html')
 
@@ -67,10 +80,7 @@ def register():
                 return flash('please fill in all the creds')
         else:
             return flash('please fill in the email!')
-    elif request.method=='GET':
-        print("Signup page is fetched using GET directly!")
-        return render_template('signup.html')
-    return index()
+    return redirect(url_for('index'))
 
 def logout():
     logout_user()
@@ -90,7 +100,7 @@ def request_photo(request_id):
         open_request_dict = open_request.get_dict()
 
         byte_str = str(open_request_dict['photo'][2:-2]).replace("/","/%0a")
-        
+
         """
         img_data = base64.b64decode(byte_str)
         filename = str(open_request_dict['id'])+'.jpg'
@@ -102,7 +112,6 @@ def request_photo(request_id):
         print(e)
     return render_template('details.html')
 
-
 def request_all():
     from project import app
     from project.models import Request
@@ -112,30 +121,36 @@ def request_all():
     try:
         open_requests = Request.query.all()
         for r in open_requests:
-
             open_requests_dict.append(r.get_dict())
 
     except Exception as e:
         print(e)
     else:
-        # TBD : route to view
         for r in open_requests_dict:
-            print(r['id'])
             out = json.dumps(r, indent=4, sort_keys=True, default=str)
-        print(out)
         return render_template("request_list.html", dict=open_requests_dict)
     return render_template("index.html")
-    """
-    response = app.response_class(
-        response = json.dumps(data),
-        status=200,
-        mimetype='application/json'
-    )
 
-    return response
-    """
+# Change status
+def request_change_status(request_id):
+    from project import app, db
+    from project.models import Request
 
-# Read all
+    print("Form status: " + request.form['status'])
+
+    values = [item.value for item in Request.status_enum]
+    status = int(request.form['status'])
+    if request.form['status'] != None and status in values:
+        try:
+            open_request = Request.query.get(request_id)
+            succeed = open_request.update_status(status, None)
+
+            db.session.add(open_request)
+            db.session.commit()
+            db.session.close()
+        except Exception as e:
+            print(e)
+    return redirect(url_for('request_all'))
 
 # API
 # Create

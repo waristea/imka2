@@ -99,8 +99,12 @@ body {
                     <td>{{r['updated_by']}}</td>
                     <td>
                     {% if r['status_code']==1 %}
-                      <button type="button" class="btn btn-primary">Allow</button>
-                      <button type="button" class="btn btn-danger">Decline</button>
+                        <div class="container">
+                          <form action = "/request/{{r['id']}}/status" method = "POST">
+                              <button type="submit" name="status" class="btn btn-primary" value="2">Alllow</button>
+                              <button type="submit" name="status" class="btn btn-danger" value="3">Decline</button>
+                          </form>
+                        </div>
                     {% else %}
                       -
                     {% endif %}

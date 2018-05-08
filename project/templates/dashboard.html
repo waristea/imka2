@@ -195,9 +195,13 @@ input[type=text], input[type=password] {
                </tr>
             </thead>
             <tbody align="center">
-               <!-- iterasi -->
-               <tr>
-               </tr>
+              {% for r in dict %}
+                <tr>
+                   <td>{{r['id']}}</td>
+                   <td>{{r['name']}}</td>
+                   <td>{{r['email']}}</td>
+                </tr>
+              {% endfor %}
             </tbody>
          </table>
       </div>
@@ -207,42 +211,45 @@ input[type=text], input[type=password] {
 
 <!-- MODAL add account -->
 <div id="addaccount" class="modal">
-
-  <form class="modal-content animate" action="/">
-
+  <form class="modal-content animate" action="/signup" method="POST">
     <div class="imgcontainer">
       <span onclick="document.getElementById('addaccount').style.display='none'" class="close" title="Close PopUp">&times;</span>
-
       <h1 style="align:center; color: #8c61a5";>Add New Account</h1>
     </div>
-
     <div class="container" style="color: #8c61a5">
-      <input type="text" placeholder="Enter Name" name="name";>
-      <input type="text" placeholder="Enter Email" name="email";>
-      <input type="password" placeholder="Enter Password" name="psw">
-      <buttonpro type="submit" style="width: 45%;background-color:#8c61a5;">Save Edit</buttonpro>
+      <div class="form-group">
+        <input type="text" placeholder="Enter Name" name="name";>
+      </div>
+      <div class="form-group">
+        <input type="text" placeholder="Enter Email" name="email";>
+      </div>
+      <div class="form-group">
+        <input type="password" placeholder="Enter Password" name="password">
+      </div>
+      <div class="form-group">
+        <button type="submit" style="width: 45%;background-color:#8c61a5;" name=submit>Save Edit</button>
+      </div>
     </div>
-
   </form>
-
 </div>
 
 <!-- MODAL edit account -->
 <div id="editaccount" class="modal">
 
-  <form class="modal-content animate" action="/">
+  <form class="modal-content animate" action="/signup" method="POST">
 
     <div class="imgcontainer">
       <span onclick="document.getElementById('editaccount').style.display='none'" class="close" title="Close PopUp">&times;</span>
 
-      <h1 style="text-align:center;color: #2E8B57";>Edit Account</h1>
+      <h1 style="text-align:center;color: #2E8B57";>Add Account</h1>
     </div>
 
     <div class="container">
-      <input type="text" placeholder="Edit Name" name="editname";>
-      <input type="password" placeholder="Edit Password" name="editpsw">
+      <input name="name" type="text" class="form-control" id="nama" placeholder="nama">
+      <input name="email" type="text" class="form-control" id="email" placeholder="email">
+      <input type="password" class="form-control" id="password" name="password" placeholder="Password">
       <p>
-      <buttonpro type="submit" style="width: 45%;background-color:#2E8B57;">Save Edit</buttonpro>
+      <buttonpro type="submit" style="width: 45%;background-color:#2E8B57;">Add account</buttonpro>
       </p>
     </div>
 
