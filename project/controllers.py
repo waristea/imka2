@@ -108,22 +108,31 @@ def request_photo(request_id):
 
 def request_all():
     from project import app
-    from project.models import Request
+    from project.models import Request, User
     import json
 
     open_requests_dict = []
     try:
         open_requests = Request.query.all()
+        admins = User.query.all()
+        admins_dict = {}
+        for ad in admins:
+            ad_dict = ad.get_dict()
+            admins_dict[ad_dict['id']] = ad_dict
         for r in open_requests:
-            open_requests_dict.append(r.get_dict())
-
+            req_dict = r.get_dict()
+            print("A")
+            print(req_dict['updated_by'])
+            if req_dict['updated_by']!=None:
+                req_dict['updated_by_name'] = req_dict['updated_by']
+            else:
+                req_dict['updated_by_name'] = "None"
+            open_requests_dict.append(req_dict)
     except Exception as e:
         print(e)
     else:
-        for r in open_requests_dict:
-            out = json.dumps(r, indent=4, sort_keys=True, default=str)
         return render_template("request_list.html", dict=open_requests_dict)
-    return render_template("index.html")
+    return redirect(url_for('index'))
 
 # Change status
 def request_change_status(request_id):
@@ -137,7 +146,8 @@ def request_change_status(request_id):
     if request.form['status'] != None and status in values:
         try:
             open_request = Request.query.get(request_id)
-            succeed = open_request.update_status(status, None)
+            print(current_user.get_id())
+            succeed = open_request.update_status(status, int(current_user.get_id()))
 
             db.session.add(open_request)
             db.session.commit()
@@ -222,14 +232,14 @@ def api_request_detail(request_id):
         for r in open_requests:
             open_requests_dict.append(r.get_dict())
         data['status'] = 'successful'
-        data['requests'] = json.dumps(open_requests_dict, indent=4, sort_keys=True, default=str)
+        data['requests'] = open_requests_dict
     except Exception as e:
         data['status'] = 'failed'
         data['message'] = 'exception occured, please contact admin'
         print(e)
 
     response = app.response_class(
-        response = json.dumps(data),
+        response = json.dumps(data, indent=4, sort_keys=True, default=str),
         status=200,
         mimetype='application/json'
     )
