@@ -225,14 +225,11 @@ def api_request_detail(request_id):
 
     #json_data = request.get_json()
     #print(json_data)
-    open_requests_dict = []
     data = {}
     try:
         open_requests = Request.query.filter_by(id=request_id)
-        for r in open_requests:
-            open_requests_dict.append(r.get_dict())
         data['status'] = 'successful'
-        data['requests'] = open_requests_dict
+        data['requests'] = r.get_dict()
     except Exception as e:
         data['status'] = 'failed'
         data['message'] = 'exception occured, please contact admin'

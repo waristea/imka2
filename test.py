@@ -24,22 +24,16 @@ def test_api_request_create():
     print(response.read())
 
 def test_api_request_detail(id):
+    import json, urllib
     path = ["/api/request/"]
 
-    data = {}
-    data['photo'] = "Testing"
-
-    headers = {'content-type': 'application/json'}
-
-    json_data = json.dumps(data).encode('utf8')
-    url = local+path[0]+str(id)
+    url = remote+path[0]+str(id)
     print(url)
-    method = 'GET'
 
-    req = urllib.request.Request(url, data=json_data, headers=headers, method=method)
-    response = urllib.request.urlopen(req)
-
-    print(response.read())
+    response = urllib.request.urlopen(url).read()
+    jsonResponse = json.loads(response.decode('utf-8'))
+    request = jsonResponse['requests']
+    print(request[0]['id'])
 
 def test_api_request_detail_change(id):
     path = ["/api/request/"]
@@ -61,7 +55,7 @@ def test_api_request_detail_change(id):
     response = urllib.request.urlopen(req)
 
     print(response.read())
-    
+
 def send_email(from_addr, to_addr_list, subject, body, gmail_password, smtp_server = 'smtp.gmail.com', port = 465):
     import smtplib
     from email.mime.multipart import MIMEMultipart
@@ -94,4 +88,4 @@ def test_email():
     send_email(gmail_user, to, subject, body, gmail_password)
 
 if __name__=="__main__":
-    test_api_request_detail_change(16)
+    test_api_request_detail(25)
