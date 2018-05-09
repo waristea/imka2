@@ -186,12 +186,12 @@ def api_request_create():
         for user in user_list:
             names.append(user.name)
             targets.append(user.email)
-        """
+
         subject = "Notification"
         body = "There are new door request, please check website for further info."
 
         send_email(ADMIN_EMAIL, targets, subject, body, ADMIN_ACCESS_CODE)
-        """
+        
         # Reporting to IoT Device
         data['creation_status'] = 'successful'
         data['message'] = 'Request creation successful. You can check request status by looking at http://imka.herokuapp.com/request/<request_id> or http://imka.herokuapp.com/api/request/<request_id>'
