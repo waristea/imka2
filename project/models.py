@@ -76,7 +76,7 @@ class Request(db.Model):
     created_on = db.Column(db.DateTime, nullable=False)
     updated_on = db.Column(db.DateTime, nullable=False)
     updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    photo = db.Column(db.String(131071), nullable=True)
+    photo = db.Column(db.String(131072), nullable=True)
 
     def __init__(self, status=status_enum(1).value, updated_by=None, photo=None):
         self.status = int(status)
