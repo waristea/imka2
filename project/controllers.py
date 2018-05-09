@@ -20,7 +20,7 @@ def index():
 
         except Exception as e:
             print(e)
-            
+
         return render_template('dashboard.html', dict=user_dict)
     else:
         return render_template('login.html')
@@ -99,14 +99,10 @@ def request_photo(request_id):
         open_request = Request.query.get(request_id)
         open_request_dict = open_request.get_dict()
 
-        byte_str = str(open_request_dict['photo'][2:-2]).replace("/","/%0a")
+        print(open_request_dict['photo'])
+        byte_str = str(open_request_dict['photo'][2:-1])
+        print(byte_str)
 
-        """
-        img_data = base64.b64decode(byte_str)
-        filename = str(open_request_dict['id'])+'.jpg'
-        with open(filename, 'wb') as f:
-            f.write(img_data)
-            """
         return render_template('details.html', photo=byte_str)
     except Exception as e:
         print(e)
