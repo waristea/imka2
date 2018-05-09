@@ -47,16 +47,6 @@ def test_api_request_detail_change(id):
     with open("ruby.jpg", "rb") as image_file:
         photo_string = base64.b64encode(image_file.read())
 
-    print(photo_string)
-    return photo_string
-    """
-    img_data = base64.b64decode(photo_string)
-    filename = 'new_ruby.jpg'  # I assume you have a way of picking unique filenames
-    with open(filename, 'wb') as f:
-        f.write(img_data)
-    """
-
-    """
     data = {}
     data['photo'] = photo_string
 
@@ -71,7 +61,7 @@ def test_api_request_detail_change(id):
     response = urllib.request.urlopen(req)
 
     print(response.read())
-    """
+    
 def send_email(from_addr, to_addr_list, subject, body, gmail_password, smtp_server = 'smtp.gmail.com', port = 465):
     import smtplib
     from email.mime.multipart import MIMEMultipart
