@@ -32,8 +32,8 @@ def test_api_request_detail(id):
 
     response = urllib.request.urlopen(url).read()
     jsonResponse = json.loads(response.decode('utf-8'))
-    request = jsonResponse['requests']
-    print(request[0]['id'])
+    request = jsonResponse
+    print(request)
 
 def test_api_request_detail_change(id):
     path = ["/api/request/"]

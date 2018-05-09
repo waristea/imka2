@@ -229,7 +229,7 @@ def api_request_detail(request_id):
     try:
         open_requests = Request.query.filter_by(id=request_id)
         data['status'] = 'successful'
-        data['requests'] = r.get_dict()
+        data['requests'] = open_requests[0].get_dict()
     except Exception as e:
         data['status'] = 'failed'
         data['message'] = 'exception occured, please contact admin'
