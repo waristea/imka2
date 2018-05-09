@@ -188,17 +188,23 @@ def api_request_create():
         data['request_id'] = open_request.get_id()
         data['request'] = json.dumps(open_request.get_dict(), indent=4, sort_keys=True, default=str)
 
-        db.session.close()
-    except Exception as e:
-        data['status'] = 'failed'
-        data['message'] = 'exception occured, please contact admin'
-        print(e)
-    else:
         response = app.response_class(
         response = json.dumps(data),
         status=200,
         mimetype='application/json'
-    )
+        )
+
+        db.session.close()
+    except Exception as e:
+        data['status'] = 'failed'
+        data['message'] = 'exception occured, please contact admin'
+
+        response = app.response_class(
+        response = json.dumps(data),
+        status=500,
+        mimetype='application/json'
+        )
+        print(e)
 
     return response
 # Read
