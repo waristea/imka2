@@ -76,14 +76,14 @@ class Request(db.Model):
     created_on = db.Column(db.DateTime, nullable=False)
     updated_on = db.Column(db.DateTime, nullable=False)
     updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    #photo = db.Column(db.String(131072), nullable=True)
+    photo = db.Column(db.String(131072), nullable=True)
 
     def __init__(self, status=status_enum(1).value, updated_by=None, photo=None):
         self.status = int(status)
         self.created_on = datetime.datetime.now()
         self.updated_on = datetime.datetime.now()
         self.updated_by = updated_by
-        #self.photo = photo
+        self.photo = photo
 
     def get_dict(self):
         request_dict = {}
@@ -99,7 +99,7 @@ class Request(db.Model):
         request_dict['status_code'] = self.status
         request_dict['created_on'] = self.created_on
         request_dict['updated_on'] = self.updated_on
-        #request_dict['photo'] = self.photo
+        request_dict['photo'] = self.photo
 
         return request_dict
 
@@ -115,7 +115,7 @@ class Request(db.Model):
             return False # unsuccessful
 
     def update_photo(self, photo, updated_by):
-        #self.photo = photo
+        self.photo = photo
         self.updated_by = updated_by
         self.updated_on = datetime.datetime.now()
 
